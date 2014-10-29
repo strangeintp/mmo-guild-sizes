@@ -21,7 +21,7 @@
 \author{Vince Kane}
 \institute{George Mason University, Fairfax, VA, U.S.
 \thanks{I would like to thank Claudio Cioffi-Revilla for guidance provided while instructing the graduate seminar "Computational Analysis of Social Complexity" (Spring 2014, GMU), and to classmates from the same who brought my attention to the methods of CSN 2009 and VC 2014 (referenced in the paper) for testing power law distributions and working with binned data.}\\
-\email{vkane2\@gmu.edu}}
+\email{vkane2@gmu.edu}}
 
 \maketitle
 
@@ -65,7 +65,7 @@ Guild size data were obtained for five high-population MMO games:  Lord of the R
 
 \begin{table}
 	\centering	
-	\caption{Guild sizes for five MMOs, with totals.  Values in parentheses are prior to elimination of duplicates.}
+	\caption{Guild size bins for five MMOs, with totals.  Values in parentheses are prior to elimination of duplicates.}
 	\begin{tabular}{|c|c|c|c|c|c|c|}
 		\hline 
 		size bin & LOTRO & EQ2 & EVE & AoC & GW2 & All \\ 
@@ -92,15 +92,12 @@ Guild size data were obtained for five high-population MMO games:  Lord of the R
 	\label{tab:mmoguildsizes}
 \end{table}
 
-The column “All” contains totals for each of the bins across all games examined.  This aggregated data was modified to eliminate duplicates in the two largest bins (500-1000 and 1000+).
-The larger guilds tended to play multiple games (including others not examined in this analysis).
-Where these duplicates had games of this analysis in common, they were eliminated from the aggregate data in the largest bins because multiply-counting them would artificially – and unjustifiably – increase the weight of the upper tail.
-Four duplicate counts were decremented from the bin for size 500-1000, bringing the total from 11 to 7, and four counts were decremented from the bin size 1000+, bringing the total from 22 to 18.
-Duplicates in the lower bins were not rigorously treated, since a review of the guild data did not identify them to be a sufficiently significant factor in the aggregate data.
+The column “All” contains totals for each of the bins across all games examined.  This aggregated data was modified to eliminate duplicates in the two largest bins (500-1000 and 1000+), where multiply-counting larger guilds that played multiple games would artificially – and unjustifiably – increase the weight of the upper tail.
+A review of the guild data did not identify duplicates in smaller guilds to be a sufficiently significant factor in the aggregate data.
 
 The analysis was implemented in the Python programming language.\footnote{The Python source code is available online at \textit{github.com/strangeintp/mmo-guild-sizes.}}
 
-As identified previously, the process recommended by VC 2014 was implemented, with two major deviations:  1) in place of the log-likelihood function for estimating the scaling parameter $\alpha$, the author estimated using a least-sum-of-squared-error, and 2) in place of the likelihood ratio test for comparing goodness-of-fit against alternate distributions, direct $p-value$ comparative analysis was used.
+As identified previously, the process recommended by VC 2014 was implemented, with two major deviations:  1) in place of the log-likelihood function for estimating the scaling parameter $\alpha$, I estimated using a least-sum-of-squared-error, and 2) in place of the likelihood ratio test for comparing goodness-of-fit against alternate distributions, direct $p-value$ comparative analysis was used.
 These deviations will be expanded on in the process description below.
 
 Four distributional models were tested for fit to the empirical data:  power, linear, exponential, and log-normal (a visual inspection is sufficient to rule out a linear fit, but was included for completeness).
@@ -128,17 +125,15 @@ All methods described above were tested against exact linear and log-normal dist
 
 \section{Results}
 Table \ref{tab:pvalues} summarizes the goodness-of-fit test results from the analysis.
-For three out of the five games and the aggregated data, the p-values from the analysis clearly reject other distributions besides power law; exceptions are AoC and Eve.
-Note for these cases that the higher log-normal p-value is followed closely by power law; neither can be ruled out.
-
-More significantly, however, for the aggregated data p-values (the “All” columns), the power law reports p-value $\gg 0.1$, while the other distributional fit p-values are ~0.  
+For two out of the five games and the aggregated data, the p-values from the analysis clearly reject other distributions besides power law.
+For EQ2, Eve, and AoC, a log-normal distribution is also supported.
 
 \begin{table}
 	\centering
 	\caption{p-values for all analyzed data sets, epsilon = 0.01 (2500 synthetic data sets per column).}
 	\begin{tabular}{|c r r r r r r|}
 		\hline
-		p-values & 	All	& LOTRO & EQ2 & Eve & AoC & GW2 \\
+		distribution & 	All	& LOTRO & EQ2 & Eve & AoC & GW2 \\
 		\hline
 		power & 0.471 & 0.6293 & 0.9624 & 0.9508 & 0.8952 & 0.2759 \\
 		linear & 0 & 0 & 0.3942 & 0.0308 & 0.0412 & 0.0144 \\
@@ -200,9 +195,9 @@ Hill estimation was similarly performed on the game-specific guild size distribu
 The generated p-values, especially for those of the aggregate data, strongly support a power law distribution, indicating an underlying scale-invariant, complex process is involved in guild membership.
 In particular for the aggregate data, the other distributions are rejected since their p-values $\ll$ 0.1 [CFN 2009].
 Even visually, the power law estimate produces an astoundingly good fit with the exception of the second largest bin (500-1000) and the smallest bin (1-20).
-
 The K-S statistics as reported by the Hill estimation technique also support this conclusion.
-In the anomalous cases (AoC and Eve) where a log-normal distribution is supported over a power law, the support is weak (p-values not much higher than for a power law), or directly contradicted by alternate metrics of fitness (Hill estimation).
+
+In the cases (EQ2, Eve, and AoC) where a log-normal distribution is supported as well, the support is weak (p-values lower or not much higher than for a power law), or directly contradicted by alternate metrics of fitness (Hill estimation).
 Additionally, it is unlikely that one game’s guild sizes would have an inherently different generative mechanism – resulting in a different distribution – than other high-membership online games.  
 
 Of note are the low bin boundaries identified for upper-tail inclusion by the Hill estimation – in fact, in most cases the power law behavior is a remarkably better fit when the lower bins are included.
@@ -227,17 +222,14 @@ As with many organizational size distributions characterized by power laws, soci
 The well-known \parencite{BA1999} paper shows that growth and preferential attachment are sufficient to produce scale-free social network degree distribution.
 If social networks are the driving force behind the size of social groupings – including voluntary organizations such as online gaming guilds – and if social networks exhibit power law size, then it is not surprising to find that social institutions also exhibit power law size.
 
-While \parencite{BA1999} provide a strong causal argument for the creation of a scale-free network architecture, what is lacking generally in the literature is a single model that accounts for – and maintains, in the presence of natural growth and attrition processes – the power law distributional aspects of social organizations in the upper tail while modeling the flattening of the lower tail.
-Such a model would be a rich study for future work.
-
 \section{Conclusion}
 The methods of CSN 2009 and VC 2014 were applied, with slight modification, to identify the best candidate distributional model for MMO game guild sizes.
-Sum squared error was used for parametric estimation of the candidate distributions (power, linear, exponential, and log-normal). 
-In most cases, a power law model was found to be the best fit to the empirical data for individual games, and was a clear best fit for the aggregate data, other distributional models being rejected for the aggregate data based on p-value analysis results.
+for individual games, a power law model was found to be a likely candidate fit to the empirical data with some support for log-normal. However, a pwer law was a clear best fit for the aggregate data, since other distributional models were rejected.
 Hill estimation was used to determine the most likely valid range of the upper tail, and also reported power law as the most likely distributional model.
 
 Strong support for a Type II (absolute frequency) power law distributional model of MMO guild sizes indicates that scale-invariant social dynamics are generating and maintaining participation in\\guilds.
 Social scientists with an interest in MMO game research and development could analyze the scaling exponent and minimum bin size for individual games to help identify potential causal differences stemming from game play.
+
 Finally, these results indicate that scale-invariant social dynamics extend to sociality in virtual worlds --- as might be expected; further related work on distributional analysis of virtual presence in other types of online social organizations would add to the body of knowledge, and could contribute to the formation of a general complexity theory for our social life, virtual or otherwise.
 
 \printbibliography
